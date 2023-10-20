@@ -83,4 +83,28 @@ int main(int argc, char *argv[])
   #ifdef DEBUG 
 	printf("Host: %s, Port: %d\n", ip_address.c_str(), port);
   #endif
+
+  /* TCP Socket */
+  if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+  {
+      error("socket:");
+  }
+
+  /* Bind the client IP Address to server */
+
+  clientAddr.sin_family = AF_INET;
+  clientAddr.sin_port = htons(port);
+  inet_pton(AF_INET, ip_address.c_str(), &clientAddr.sin_addr);
+
+  // Listen and Connect to Server
+  int cliConn = connect(sockfd, (sockaddr*)&clientAddr, sizeof(clientAddr));
+  // Display error on failed connection
+  if (cliConn == -1)
+  {
+      error("connect:");
+  }
+  getsockname(sockfd, (struct sockaddr *)&clientAddr, &sa_len);
+  printf("Connection established with %s local %s:%d\n", argv[1], inet_ntoa(clientAddr.sin_addr), (int)ntohs(clientAddr.sin_port));
+
+
 }
