@@ -104,7 +104,40 @@ int main(int argc, char *argv[])
       error("connect:");
   }
   getsockname(sockfd, (struct sockaddr *)&clientAddr, &sa_len);
-  printf("Connection established with %s local %s:%d\n", argv[1], inet_ntoa(clientAddr.sin_addr), (int)ntohs(clientAddr.sin_port));
+  printf("Connection established with %s local ip and port %s:%d\n", argv[1], inet_ntoa(clientAddr.sin_addr), (int)ntohs(clientAddr.sin_port));
 
+  // Buffer to accept response from server
+  char buffer[1024];
+  char resBuff[1024];
+  char opt[10];                // for storing operator
+  double fnum1, fnum2, ftotal; // for storing float values and result
+  int inum1, inum2, itotal;    // for storing integer values and result
+
+  // Receive data from the server
+  if (recv(sockfd, buffer, sizeof(buffer), 0))
+  {
+      error("Receive:");
+  }
+  #ifdef DEBUG
+      printf(buffer);
+  #endif
+  if (strcmp(buffer, "TEXT TCP 1.0\n\n") == 0)
+  {
+      // Reset buffer array to null
+      memset(buffer, '\0', sizeof(buffer));
+      strcpy(buffer, "ok\n");  // Send 'Ok' to server to show that TCP protocol is accepted
+      if (send(sockfd, buffer, sizeof(buffer), 0) < 0)
+      {
+          error("send:");
+      }
+      // Reset buffer array to null  
+      memset(buffer, '\0', sizeof(buffer));
+      // Receive the assignment from server
+      if (recv(sockfd, buffer, sizeof(buffer), 0) < 0)
+      {
+        error("Assignment:");
+      }
+      printf("ASSIGNMENT: %s", buffer);
+  }
 
 }
