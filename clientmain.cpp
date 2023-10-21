@@ -68,8 +68,7 @@ int main(int argc, char *argv[])
   {
       string ss1(Desthost);
       ip_address = ss1;
-  } else
-  {
+  } else {
       hostent *record = gethostbyname(Desthost);
       if(record == NULL)
       {
@@ -80,9 +79,9 @@ int main(int argc, char *argv[])
       ip_address = inet_ntoa(* address);
   }
   
-  #ifdef DEBUG 
-	printf("Host: %s, Port: %d\n", ip_address.c_str(), port);
-  #endif
+	#ifdef DEBUG
+		printf("Host: %s, Port: %d\n", ip_address.c_str(), port);
+	#endif
 
   /* TCP Socket */
   if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -138,6 +137,79 @@ int main(int argc, char *argv[])
         error("Assignment:");
       }
       printf("ASSIGNMENT: %s", buffer);
-  }
 
-}
+      // Get data based on provided 
+      sscanf(buffer, "%s", opt);
+
+      // Perform a check of the operator if it's a float
+      if (opt[0] == 'f')
+      {
+          sscanf(buffer, "%s %lg %lg",opt, &fnum1, &fnum2);
+          
+          if (strcmp(opt, "fadd") == 0)
+          {
+              ftotal = fnum1 + fnum2;
+          } else if (strcmp(opt, "fsub") == 0)
+          {
+              ftotal = fnum1 - fnum2;
+          } else if (strcmp(opt, "fmul") == 0)
+          {
+              ftotal = fnum1 * fnum2;
+          } else if (strcmp(opt, "fdiv") == 0)
+          {
+              ftotal = fnum1 / fnum2;
+          } 
+          
+          // Reset buffer array to null
+          memset(resBuff, '\0', sizeof(resBuff));
+          // Construct the response as a string value
+          sprintf(resBuff, "%8.8g\n",ftotal);
+          // Send back the result to the server
+          resBuff[strlen(resBuff) + 1] = '\0';      
+      } else {
+ 			    sscanf(buffer, "%s %d %d",opt, &inum1, &inum2);
+
+			    if (strcmp(opt, "add") == 0)
+			    {
+			      	itotal = inum1 + inum2;
+		    	} else if (strcmp(opt, "sub") == 0)
+		    	{
+			      	itotal = inum1 - inum2;
+		    	} else if (strcmp(opt, "mul") == 0)
+			    {
+				      itotal = inum1 * inum2;
+          } else if (strcmp(opt, "div") == 0)
+          {
+              itotal = inum1 / inum2;
+          }
+          // Reset buffer array to null
+          memset(resBuff, '\0', sizeof(resBuff));
+          // Construct the result resonse as a string value
+          sprintf(resBuff, "%d\n",itotal);
+          // Send back the result to  the server
+          resBuff[strlen(resBuff)+1] = '\0';
+      }
+
+      if (write(sockfd, resBuff, strlen(resBuff)) < 0)
+      {
+          error("send:");
+      }
+
+      // Reset buffer array to null
+      memset(buffer, '\0', sizeof(buffer));
+      // Receive result of assignment from server
+      if (recv(sockfd, buffer, sizeof(buffer), 0) < 0)
+      {
+          error("recv:");
+      }
+
+      #ifdef DEBUG
+          printf("Result is calculated as %s", resBuff);
+      #endif
+          printf("%s(myresult=%s)\n", strtok(buffer,"\n"), strtok(resBuff, "\n"));
+
+    } else {
+          close(sockfd);
+    }
+    return 0;
+}     
