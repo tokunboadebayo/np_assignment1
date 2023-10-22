@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     unsigned int sa_len = sizeof(clientAddr);
 
-    if (argc !=2)
+    if (argc != 2)
     {
 		    fprintf(stderr, "usage: %s <ip>:<port>\n", argv[0]);
 		    exit(0);
@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
   */
  // extract the ip and port from the given argument
   char delim[]=":";
-  char *Desthost=strtok(argv[1],delim);
-  char *Destport=strtok(NULL,delim);
+  char *Desthost=strtok(argv[1], delim);
+  char *Destport=strtok(NULL, delim);
   // *Desthost now points to a sting holding whatever came before the delimiter, ':'.
   // *Dstport points to whatever string came after the delimiter. 
 
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
       error("connect:");
   }
   getsockname(sockfd, (struct sockaddr *)&clientAddr, &sa_len);
-  printf("Connection established with %s local ip and port %s:%d\n", argv[1], inet_ntoa(clientAddr.sin_addr), (int)ntohs(clientAddr.sin_port));
+  printf("Connected to %s local %s:%d\n", argv[1], inet_ntoa(clientAddr.sin_addr), (int)ntohs(clientAddr.sin_port));
 
   // Buffer to accept response from server
   char buffer[1024];
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
   int inum1, inum2, itotal;    // for storing integer values and result
 
   // Receive data from the server
-  if (recv(sockfd, buffer, sizeof(buffer), 0))
+  if (recv(sockfd, buffer, sizeof(buffer), 0) < 0)
   {
       error("Receive:");
   }
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
   {
       // Reset buffer array to null
       memset(buffer, '\0', sizeof(buffer));
-      strcpy(buffer, "ok\n");  // Send 'Ok' to server to show that TCP protocol is accepted
+      strcpy(buffer, "OK\n");  // Send 'Ok' to server to show that TCP protocol is accepted
       if (send(sockfd, buffer, sizeof(buffer), 0) < 0)
       {
           error("send:");
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
       }
       printf("ASSIGNMENT: %s", buffer);
 
-      // Get data based on provided 
+      // Get data based on provided parameters
       sscanf(buffer, "%s", opt);
 
       // Perform a check of the operator if it's a float
@@ -178,10 +178,10 @@ int main(int argc, char *argv[])
 		    	} else if (strcmp(opt, "mul") == 0)
 			    {
 				      itotal = inum1 * inum2;
-          } else if (strcmp(opt, "div") == 0)
-          {
-              itotal = inum1 / inum2;
-          }
+                } else if (strcmp(opt, "div") == 0)
+                {
+                    itotal = inum1 / inum2;
+                }
           // Reset buffer array to null
           memset(resBuff, '\0', sizeof(resBuff));
           // Construct the result resonse as a string value
