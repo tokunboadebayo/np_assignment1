@@ -36,8 +36,26 @@ int main(int argc, char *argv[]){
   // *Desthost now points to a sting holding whatever came before the delimiter, ':'.
   // *Dstport points to whatever string came after the delimiter. 
 
-  /* Do magic */
-  int port=atoi(Destport);
+  if(Desthost == NULL || Destport == NULL){
+    printf("Invalid input\n");
+    exit(1);
+  }
+
+  // Converting port no to integer and host ip address to string
+  int port = atoi(Destport);
+  string ipAddr = Desthost;
+  printf("Host %s, and port %d\n", Desthost, port);
+  // Tcp socket
+  int sock = socket(AF_INET, SOCK_STREAM, 0);
+  if(sock == -1){
+    printf("Error unable to setup socket\n");
+    exit(1);
+  }
+
+
+
+
+
 #ifdef DEBUG 
   printf("Host %s, and port %d.\n",Desthost,port);
 #endif
