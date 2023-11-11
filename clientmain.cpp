@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
-  // Converting port no to integer and host ip address to string
+    // Converting port no to integer and host ip address to string
   int port = atoi(Destport);
   string ipAddr = Desthost;
   printf("Host %s, and port %d\n", Desthost, port);
@@ -63,6 +63,15 @@ int main(int argc, char *argv[]){
   if(connectRes == -1){
     printf("Error unable to establish connection");
   }
+  char myAddress[20];
+  char *myAdd = myAddress;
+
+  struct sockaddr_in local_sin;
+  socklen_t local_sinlen = sizeof(local_sin);
+  getsockname(sock,(struct sockaddr*)&local_sin, &local_sinlen);
+  inet_ntop(local_sin.sin_family, &local_sin.sin_addr, myAddress, sizeof(myAddress));
+  myAdd = myAddress;
+
 
 
 
