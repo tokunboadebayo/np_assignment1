@@ -52,7 +52,17 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
+  /* Bind the client IP Address to server */
+  struct sockaddr_in clientAddr;
+  clientAddr.sin_family = AF_INET;
+  clientAddr.sin_port = htons(port);
+  inet_pton(AF_INET, ipAddr.c_str(), &clientAddr.sin_addr);
 
+  // Listen and Connect to Server
+  int connectRes = connect(sock, (sockaddr*)&clientAddr, sizeof(clientAddr));
+  if(connectRes == -1){
+    printf("Error unable to establish connection");
+  }
 
 
 
