@@ -72,12 +72,46 @@ int main(int argc, char *argv[]){
   inet_ntop(local_sin.sin_family, &local_sin.sin_addr, myAddress, sizeof(myAddress));
   myAdd = myAddress;
 
+  #ifdef DEBUG 
+  printf("Connected to %s:%d local %s:%d\n", Desthost, port, myAdd, ntohs(local_sin.sin_port));
+  #endif
 
+  // Talk to server
+  char buf[1000];    /* Buffer to accept response from server*/
+  
+  memset(buf, 0, sizeof(buf));
+  int bytesReceived = recv(sock, &buf, sizeof(buf), 0);
+  printf("%s, buf");
 
+  string ok = "OK\n";
 
-#ifdef DEBUG 
-  printf("Host %s, and port %d.\n",Desthost,port);
-#endif
+  if(string(buf).find("TEXT TCP") != string::npos){
+    int sendRes = send(sock, ok.c_str(), ok.length(), 0);
+    if(sendRes == -1){
+      printf("Could not send\n");
+      exit(1);
+    }
+    printf("OK\n");    // Send 'Ok' to server to show that TCP protocol is
+  }
+  else{
+    printf("Protocol is unsupported");
+    close(sock);
+    exit(1);
+  }
+
+  memset(buf, 0, sizeof(buf));
+  bytesReceived = recv(sock, buf, sizeof(buf), 0);
+  //printf("%s", buf);
+  char *calc = strtok(buf, " ");
+  char *num1 = strtok(NULL, " ");
+  char *num2 = strtok(NULL, " ");
+  int i1 = 0, i2 = 0, iresult = 0;     // for storing integer values and result
+  float f1 = 0, f2 = 0, fresult = 0;   // for storing float values and result
+  string result = "";
+  printf("ASSIGNMENT: %s %s %s, calc, num1, num2");  // Receive the assignment from server
+
+  //Compute the result of assignment
+
 
   
 }
