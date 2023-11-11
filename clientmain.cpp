@@ -25,10 +25,6 @@ int main(int argc, char *argv[]){
     printf("Invalid input\n");
     exit(1);
   }
-}
-
-
-int main(int argc, char *argv[]){
 
   /*
     Read first input, assumes <ip>:<port> syntax, convert into one string (Desthost) and one integer (port). 
