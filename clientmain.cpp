@@ -15,13 +15,13 @@
 #define DEBUG
 
 // Included to get the support library
-#include <calcLib.h>
+#include "calcLib.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]){
   if(argc != 2){
-    printf("Invalid input\n");
+    printf("Invalid input, please enter correct arguements\n");
     exit(1);
   }
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]){
   
   memset(buf, 0, sizeof(buf));
   int bytesReceived = recv(sock, &buf, sizeof(buf), 0);
-  printf("%s, buf");
+  printf("%s", buf);
 
   string ok = "OK\n";
 
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]){
   int i1 = 0, i2 = 0, iresult = 0;     // for storing integer values and result
   float f1 = 0, f2 = 0, fresult = 0;   // for storing float values and result
   string result = "";
-  printf("ASSIGNMENT: %s %s %s, calc, num1, num2");  // Receive the assignment from server
+  printf("ASSIGNMENT: %s %s %s", calc, num1, num2);  // Receive the assignment from server
 
   //Compute the integer results
   if(string(calc).at(0)!='f'){
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]){
     }
 
     #ifdef DEBUG
-    printf("The calculated reult is %s", result.c_str());
+    printf("The calculated result is: %s", result.c_str());
     #endif
 
     //Get status (OK or ERROR)
