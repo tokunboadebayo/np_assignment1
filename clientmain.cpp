@@ -151,5 +151,30 @@ int main(int argc, char *argv[]){
     string result2 = result;
     result += '\n';
 
+    //Send reusults to server
 
+    int sendRes = send(sock, result.c_str(), result.length(), 0);
+    if(sendRes == -1){
+      printf("Unable to send result\n");
+      return 1;
+    }
+
+    #ifdef DEBUG
+    printf("The calculated reult is %s", result.c_str());
+    #endif
+
+    //Get status (OK or ERROR)
+    memset(buf, 0, sizeof(buf));
+    bytesReceived = recv(sock, buf, sizeof(buf), 0);
+    if(string(buf).find("OK") != string::npos){
+      printf("OK (my result = %s)\n", result2.c_str());
+    }
+    else{
+      printf("%s", buf);
+    }
+
+    //Close Socket
+    close(sock);
+
+    return 0;
 }
