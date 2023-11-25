@@ -110,8 +110,24 @@ int main(int argc, char *argv[]){
   string result = "";
   printf("ASSIGNMENT: %s %s %s, calc, num1, num2");  // Receive the assignment from server
 
-  //Compute the result of assignment
-
-
+  //Compute the integer results
+  if(string(calc).at(0)!='f'){
+    i1 = stoi(num1);
+    i2 = stoi(num2);
+    if(string(calc) == "add"){
+      iresult = i1+i2;
+    }
+    else if(string(calc) == "sub"){
+      iresult = i1-i2;
+    }
+    else if(string(calc) == "mul"){
+      iresult = i1*i2;
+    }
+    else if(string(calc) == "div"){
+      iresult = i1/i2;
+    }
+  //printf("%8.8g\n",fresult);
+  result = to_string(iresult);
+  }
   
 }
