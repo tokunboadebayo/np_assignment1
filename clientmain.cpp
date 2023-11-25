@@ -129,5 +129,27 @@ int main(int argc, char *argv[]){
   //printf("%8.8g\n",fresult);
   result = to_string(iresult);
   }
-  
+  //Compute floating point results
+    else{
+      f1 = stod(num1);
+      f2 = stod(num2);
+      if(string(calc) == "fadd"){
+        fresult = f1+f2;
+      }
+      else if(string(calc) == "fsub"){
+        fresult = f1-f2;
+      }
+      else if(string(calc) == "fmul"){
+        fresult = f1*f2;
+      }
+      else if(string(calc) == "fdiv"){
+        fresult = f1/f2;
+      }
+    //printf("%8.8g\n",fresult);
+      result = to_string(fresult);
+    }
+    string result2 = result;
+    result += '\n';
+
+
 }
