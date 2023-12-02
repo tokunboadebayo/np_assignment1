@@ -161,6 +161,153 @@ int main(int argc, char *argv[])
   int i1, i2, iRes;
   bool correct = false;
 
+  while (true) //main accept loop
+  {
+    sin_size = sizeof(their_addr);
+    new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
+    if (new_fd == -1)
+    {
+      printf("Accept error.\n");
+      printf("%s\n", strerror(errno));
+      continue;
+    }
+    if (setsockopt(new_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0)
+    {
+      perror("setsockopt failed\n");
+    }
+
+    inet_ntop(their_addr.ss_family,
+              get_in_addr((struct sockaddr *)&their_addr),
+              s, sizeof(s));
+
+    if (send(new_fd, protocols.c_str(), protocols.length(), 0) == -1)
+    {
+      printf("Send error.\n");
+      close(new_fd);
+      continue;
+    }
+    memset(&buf, 0, sizeof(buf));
+    readSize = recv(new_fd, &buf, MAXSZ, 0);
+    if (readSize <= 0)
+    {
+      send(new_fd, "ERROR TO\n", strlen("ERROR TO\n"), 0);
+      printf("Child [%d] died.\n", childCount);
+      close(new_fd);
+      continue;
+    }
+    //if client accepts the protocols
+    if (strcmp(buf, "OK\n") == 0)
+    {
+      //get random calculation and two random numbers
+      string operation = randomType();
+      if (operation.at(0) == 'f')
+      {
+        //Float
+        f1 = randomFloat();
+        f2 = randomFloat();
+        fRes = 0;
+        if (operation == "fadd")
+        {
+          fRes = f1 + f2;
+        }
+        else if (operation == "fsub")
+        {
+          fRes = f1 - f2;
+        }
+        else if (operation == "fmul")
+        {
+          fRes = f1 * f2;
+        }
+        else if (operation == "fdiv")
+        {
+          fRes = f1 / f2;
+        }
+        string msg = "";
+        msg = operation + " " + to_string(f1) + " " + to_string(f2) + "\n";
+        if (send(new_fd, msg.c_str(), msg.length(), 0) == -1)
+        {
+          printf("Send error.\n");
+          close(new_fd);
+          continue;
+        }
+        memset(&buf, 0, sizeof(buf));
+        readSize = recv(new_fd, &buf, MAXSZ, 0);
+        if (readSize <= 0)
+        {
+          send(new_fd, "ERROR TO\n", strlen("ERROR TO\n"), 0);
+          printf("Child [%d] died.\n", childCount);
+          close(new_fd);
+          continue;
+        }
+        if (abs(atof(buf) - fRes) < 0.0001)
+        {
+          correct = true;
+        }
+        else
+        {
+          correct = false;
+        }
+      }
+      else
+      {
+        //int
+        i1 = randomInt();
+        i2 = randomInt();
+        iRes = 0;
+        if (operation == "add")
+        {
+          iRes = i1 + i2;
+        }
+        else if (operation == "sub")
+        {
+          if (i1 >= i2)
+          {
+            iRes = i1 - i2;
+          }
+          else
+          {
+            iRes = i2 - i1;
+          }
+        }
+        else if (operation == "mul")
+        {
+          iRes = i1 * i2;
+        }
+        else if (operation == "div")
+        {
+          iRes = i1 / i2;
+        }
+        string msg;
+        msg = operation + " " + to_string(i1) + " " + to_string(i2) + "\n";
+        if (send(new_fd, msg.c_str(), msg.length(), 0) == -1)
+        {
+          printf("Send error.\n");
+          close(new_fd);
+          continue;
+        }
+        memset(&buf, 0, sizeof(buf));
+        readSize = recv(new_fd, &buf, MAXSZ, 0);
+        if (readSize <= 0)
+        {
+          send(new_fd, "ERROR TO\n", strlen("ERROR TO\n"), 0);
+          printf("Child [%d] died.\n", childCount);
+          close(new_fd);
+          continue;
+        }
+        if (atof(buf) == iRes)
+        {
+          correct = true;
+        }
+        else
+        {
+          correct = false;
+        }
+      }
+    }
+  }
+
+  
+
 
 
 
