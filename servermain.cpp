@@ -100,6 +100,67 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
+  //loop through all the results and bind to the first possible
+  for (p = serverinfo; p != NULL; p = p->ai_next)
+  {
+    //Create socket
+    sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    if (sockfd == -1)
+    {
+      printf("Could not make socket. Trying again.\n");
+      continue;
+    }
+
+    //setsockoptions
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+    {
+      printf("setsockopt.\n");
+      exit(1);
+    }
+    //bind
+    if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1)
+    {
+      close(sockfd);
+      printf("Could not bind.\n");
+      continue;
+    }
+    break;
+  }
+
+  freeaddrinfo(serverinfo); //Done with thus struct
+
+  struct timeval timeout;
+  timeout.tv_sec = 5;
+  timeout.tv_usec = 0;
+
+  if (p == NULL)
+  {
+    printf("Could not bind.\n");
+    exit(1);
+  }
+  if (listen(sockfd, BACKLOG) == -1)
+  {
+    printf("Cant litsen.\n");
+    exit(1);
+  }
+
+  sa.sa_handler = sigchld_handler;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags = SA_RESTART;
+  if (sigaction(SIGCHLD, &sa, NULL) == -1)
+  {
+    printf("sigaction");
+  }
+
+  char buf[10000];
+  int MAXSZ = sizeof(buf) - 1;
+
+  int childCount = 0;
+  int readSize;
+  float f1, f2, fRes;
+  int i1, i2, iRes;
+  bool correct = false;
+
 
 
 
