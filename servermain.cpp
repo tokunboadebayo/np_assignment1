@@ -79,9 +79,50 @@ int main(int argc, char *argv[])
 
   string protocols = "TEXT TCP\n\n";
 
-  int sockfd, new_fd;  // Listens on sock_fd, make new connection on new_fd
+  int sockfd, new_fd;  //Listens on sock_fd, make new connection on new_fd
+  struct addrinfo hints, *serverinfo, *p;
+  struct sockaddr_storage their_addr;  //connectors address information
+  socklen_t sin_size;
+  struct sigaction sa;
+  int yes = 1;
+  char s[INET6_ADDRSTRLEN];
+  int rv;
+  
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_flags = AI_PASSIVE;     //use my ip
+
+  rv = getaddrinfo(NULL, to_string(port).c_str(), &hints, &serverinfo);
+  if (rv != 0)
+  {
+    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+    exit(1);
+  }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
 
 
