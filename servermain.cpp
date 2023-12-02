@@ -53,7 +53,7 @@ void *get_in_addr(struct sockaddr *sa)
 
 int main(int argc, char *argv[])
 {
-  initCalcLib();
+  //initCalcLib();
   if (argc != 2);
   {
     printf("Invalid input detected.\n");
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  //loop through all the results and bind to the first possible
+  //loop through all the results and bind to the first available
   for (p = serverinfo; p != NULL; p = p->ai_next)
   {
     //Create socket
@@ -304,48 +304,31 @@ int main(int argc, char *argv[])
         }
       }
     }
+
+    if (correct)
+    {
+      string msg = "OK\n";
+      if (send(new_fd, msg.c_str(), msg.length(), 0) == -1)
+      {
+        printf("Send error.\n");
+      }
+      close(new_fd);
+      continue;
+    }
+    else
+    {
+      //string msg = "ERROR TO\n";
+      char msg[] = "ERROR TO\n";
+      if (send(new_fd, msg, strlen(msg), 0) == -1)
+      {
+        printf("Send error.\n");
+      }
+      fflush(stdout);
+      close(new_fd);
+      continue;
+    }
+    continue;
   }
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-#ifdef DEBUG  
-  printf("Host %s, and port %d.\n",Desthost,port);
-#endif
-
-
+  close(sockfd);
+  return 0;
 }
