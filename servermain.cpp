@@ -138,6 +138,33 @@ int main(int argc, char *argv[]){
                 exit(EXIT_FAILURE);
             }
             snprintf(response, BUFFER_SIZE, "%.8g\n", fresult);
+        
+        } else if (sscanf(buffer, "%s %d %d", operation, &i1, &i2) == 3) {
+            if (strcmp(operation, "add") == 0) {
+                iresult = i1 + i2;
+            } else if (strcmp(operation, "sub") == 0) {
+                iresult = i1 - i2;
+            } else if (strcmp(operation, "mul") == 0) {
+                iresult = i1 * i2;
+            } else if (strcmp(operation, "div") == 0) {
+                if (i2 == 0) {
+                    fprintf(stderr, "Division by zero error\n");
+                    close(sock);
+                    exit(EXIT_FAILURE);
+                }
+                iresult = i1 / i2;
+            } else {
+                fprintf(stderr, "Unknown operation '%s'\n", operation);
+                close(sock);
+                exit(EXIT_FAILURE);
+            }
+            snprintf(response, BUFFER_SIZE, "%d\n", iresult);
+        } else {
+            fprintf(stderr, "Failed to parse the command or unknown operation received: '%s'\n", buffer);
+            close(sock);
+            exit(EXIT_FAILURE);
+        }
+
 
 #ifdef DEBUG  
   printf("Host %s, and port %d.\n",Desthost,port);
