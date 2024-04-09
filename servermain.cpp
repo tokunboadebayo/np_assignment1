@@ -105,6 +105,40 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
 
+    while (1) {
+        memset(buffer, 0, BUFFER_SIZE);
+        int bytes_received = recv(sock, buffer, BUFFER_SIZE - 1, 0);
+        if (bytes_received == -1) {
+            perror("recv");
+            break;
+        } else if (bytes_received == 0) {
+            break;
+        }
+
+        buffer[bytes_received] = '\0';
+        printf("Server: %s\n", buffer);
+
+        char operation[5];
+        double f1, f2, fresult;
+        int i1, i2, iresult;
+        char response[BUFFER_SIZE];
+
+        if (sscanf(buffer, "%s %lf %lf", operation, &f1, &f2) == 3) {
+            if (strcmp(operation, "fadd") == 0) {
+                fresult = f1 + f2;
+            } else if (strcmp(operation, "fsub") == 0) {
+                fresult = f1 - f2;
+            } else if (strcmp(operation, "fmul") == 0) {
+                fresult = f1 * f2;
+            } else if (strcmp(operation, "fdiv") == 0) {
+                fresult = f1 / f2;
+            } else {
+                fprintf(stderr, "Unknown operation '%s'\n", operation);
+                close(sock);
+                exit(EXIT_FAILURE);
+            }
+            snprintf(response, BUFFER_SIZE, "%.8g\n", fresult);
+
 #ifdef DEBUG  
   printf("Host %s, and port %d.\n",Desthost,port);
 #endif
