@@ -46,7 +46,17 @@ int main(int argc, char *argv[]){
   // *Dstport points to whatever string came after the delimiter. 
 
   /* Do magic */
-  int port=atoi(Destport);
+  int port = atoi(Destport);
+    if (port == 0) {
+        fprintf(stderr, "Invalid port\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == -1) {
+        perror("socket");
+        exit(EXIT_FAILURE);
+    }
 #ifdef DEBUG  
   printf("Host %s, and port %d.\n",Desthost,port);
 #endif
