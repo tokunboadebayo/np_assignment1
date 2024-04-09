@@ -57,6 +57,54 @@ int main(int argc, char *argv[]){
         perror("socket");
         exit(EXIT_FAILURE);
     }
+
+    /* Bind the client IP Address to server */
+    struct sockaddr_in server;
+    memset(&server, 0, sizeof(server));
+    server.sin_family = AF_INET;
+    server.sin_port = htons(port);
+
+    if (inet_pton(AF_INET, Desthost, &server.sin_addr) <= 0) {
+        perror("inet_pton");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+    // Listen and Connect to Server
+
+    if (connect(sock, (struct sockaddr *)&server, sizeof(server)) == -1) {
+        perror("connect");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Buffer to accept response from server*/
+    char buffer[BUFFER_SIZE];
+    if (recv(sock, buffer, BUFFER_SIZE, 0) == -1) {
+        perror("recv");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+    int protocolSupported = 0;
+    char *line = strtok(buffer, "\n");
+    while (line != NULL) {
+        if (strcmp(line, "TEXT TCP 1.0") == 0 || strcmp(line, "TEXT TCP 1.1") == 0) {
+            protocolSupported = 1;
+            break;
+        }
+        if (strcmp(line, "") == 0) {
+            break;
+        }
+        line = strtok(NULL, "\n");
+    }
+
+    if (!protocolSupported) {
+        fprintf(stderr, "Unsupported protocol\n");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
 #ifdef DEBUG  
   printf("Host %s, and port %d.\n",Desthost,port);
 #endif
