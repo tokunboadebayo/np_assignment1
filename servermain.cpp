@@ -14,12 +14,17 @@
 // Enable if you want debugging to be printed, see examble below.
 // Alternative, pass CFLAGS=-DDEBUG to make, make CFLAGS=-DDEBUG
 #define DEBUG
+#define BUFFER_SIZE 256
 
 
 using namespace std;
 
 
 int main(int argc, char *argv[]){
+  if (argc != 2) {
+        fprintf(stderr, "Usage: %s <ip>:<port>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
   
   /*
     Read first input, assumes <ip>:<port> syntax, convert into one string (Desthost) and one integer (port). 
