@@ -15,8 +15,6 @@
 // Included to get the support library
 #include "calcLib.h"
 
-using namespace std;
-
 int main(int argc, char *argv[]){
   if(argc != 2){
     printf("Invalid input, please enter correct arguements\n");
