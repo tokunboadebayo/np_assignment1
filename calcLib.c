@@ -69,5 +69,3 @@ double randomFloat(void){
   double x = (double)rand()/(double)(RAND_MAX/100.0);
   return(x);
 };
-
-
