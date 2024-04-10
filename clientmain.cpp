@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-/* You will to add includes here */
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <errno.h>
 
-// Included to get the support library
 #include "calcLib.h"
 
 // Enable if you want debugging to be printed, see examble below.
