@@ -36,4 +36,34 @@ int main(int argc, char *argv[])
     server_address.sin_family = server_host->h_addrtype;
     server_address.sin_port = htons(server_port);
     memcpy(&server_address.sin_addr.s_addr, server_host->h_addr, server_host->h_length);
+    
+    /* Create TCP socket. */
+    if ((socket_fd = socket(server_host->h_addrtype, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    /* Connect to socket with server address. */
+    if (connect(socket_fd, (struct sockaddr *)&server_address, sizeof server_address) == -1) {
+        perror("connect");
+        exit(1);
+    }
+
+    memset(message_received, 0x00, sizeof(message_received));
+    read(socket_fd, message_received, sizeof(message_received));
+
+    // Parse the message received from the server using \n as delimiter
+    char *token = strtok(message_received, "\n");
+    while (token != NULL)
+    {
+        // check if the incoming version is either 'TEXT TCP 1.0\n' or 'TEXT TCP 1.1\n'
+        if (strcmp(token, "TEXT TCP 1.0") != 0 && strcmp(token, "TEXT TCP 1.1") != 0)
+        {
+            printf("Server: Error; Incoming Token = %s\n", token);
+            break;
+        } else {
+            printf("Server: %s\n", token);
+        }
+        token = strtok(NULL, "\n");
+    }
 }
