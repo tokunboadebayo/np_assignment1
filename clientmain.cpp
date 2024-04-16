@@ -31,5 +31,9 @@ int main(int argc, char *argv[])
     /* Get server host from server name. */
     server_host = gethostbyname(server_name);
 
-   
+    /* Initialise IPv4 server address with server host. */
+    memset(&server_address, 0, sizeof server_address);
+    server_address.sin_family = server_host->h_addrtype;
+    server_address.sin_port = htons(server_port);
+    memcpy(&server_address.sin_addr.s_addr, server_host->h_addr, server_host->h_length);
 }
