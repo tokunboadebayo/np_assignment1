@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
     memset(message_received, 0x00, sizeof(message_received));
     read(socket_fd, message_received, sizeof(message_received));
 
+
+
     // Parse the message received from the server using \n as delimiter
     char *token = strtok(message_received, "\n");
     while (token != NULL)
@@ -66,4 +68,34 @@ int main(int argc, char *argv[])
         }
         token = strtok(NULL, "\n");
     }
+
+    // Send the Response to the Server
+    char message_sent[] = "OK\n";
+    int send_status = send(socket_fd, message_sent, sizeof(message_sent), 0);
+    if (send_status == -1)
+    {
+        perror("send");
+        exit(1);
+    }
+
+    // Expect the server to send a challenge to solve with the syntax '<OPERATION> <VALUE1> <VALUE2>\n'.
+    memset(message_received, 0x00, sizeof(message_received));
+    int read_status = read(socket_fd, message_received, sizeof(message_received));
+    if (read_status == -1)
+    {
+        perror("read");
+        exit(1);
+    }
+
+    // print the challenge
+    printf("Server: %s\n", message_received);
+
+    // Parse the message received from the server.
+    char *operation = strtok(message_received, " ");
+
+    // Check if it is floating or interger based
+    bool isfloat = operation[0] == 'f';
+
+    double f1, f2 = 0.0;
+    int i1, i2 = 0;
 }
