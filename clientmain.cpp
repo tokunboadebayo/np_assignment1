@@ -98,4 +98,48 @@ int main(int argc, char *argv[])
 
     double f1, f2 = 0.0;
     int i1, i2 = 0;
+
+    if (isfloat)
+    {
+        // parse the floating point values
+        f1 = atof(strtok(NULL, " "));
+        f2 = atof(strtok(NULL, "\n"));
+    } else {
+        // parse the integer values
+        i1 = atoi(strtok(NULL, " "));
+        i2 = atoi(strtok(NULL, "\n"));
+    }
+
+    // Perform the operation
+    double result;
+    if (isfloat)
+    {
+        if (strcmp(operation, "fadd") == 0)
+        {
+            result = f1 + f2;
+        } else if (strcmp(operation, "fsub") == 0)
+        {
+            result = f1 - f2;
+        } else if (strcmp(operation, "fmul") == 0)
+        {
+            result = f1 * f2;
+        } else if (strcmp(operation, "fdiv") == 0)
+        {
+            result = f1 / f2;
+        }
+    } else {
+        if (strcmp(operation, "add") == 0)
+        {
+            result = i1 + i2;
+        } else if (strcmp(operation, "sub") == 0)
+        {
+            result = i1 - i2;
+        } else if (strcmp(operation, "mul") == 0)
+        {
+            result = i1 * i2;
+        } else if (strcmp(operation, "div") == 0)
+        {
+            result = i1 / i2;
+        }
+    }
 }
