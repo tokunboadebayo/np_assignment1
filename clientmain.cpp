@@ -13,16 +13,16 @@
 
 int main(int argc, char *argv[])
 {
-    char server_name[SERVER_NAME_LEN_MAX + 1] = { 0 };
+    char server_name[SERVER_NAME_LEN_MAX + 1] = {0};
     int server_port, socket_fd;
     struct hostent *server_host;
     struct sockaddr_in server_address;
     char message_received[300];
 
 
-    char delim[]=":";
-    char *Desthost=strtok(argv[1],delim);
-    char *Destport=strtok(NULL,delim);
+    char delim[] = ":";
+    char *Desthost = strtok(argv[1], delim);
+    char *Destport = strtok(nullptr, delim);
 
     // Check if the input is correct
     if (Desthost == nullptr || Destport == nullptr) {
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     strncpy(server_name, Desthost, SERVER_NAME_LEN_MAX);
 
     /* Get server port from command line arguments or stdin. */
-    server_port =  atoi(Destport);
+    server_port = atoi(Destport);
 
     /* Get server host from server name. */
     server_host = gethostbyname(server_name);
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     server_address.sin_family = server_host->h_addrtype;
     server_address.sin_port = htons(server_port);
     memcpy(&server_address.sin_addr.s_addr, server_host->h_addr, server_host->h_length);
-    
+
     /* Create TCP socket. */
     if ((socket_fd = socket(server_host->h_addrtype, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     }
 
     /* Connect to socket with server address. */
-    if (connect(socket_fd, (struct sockaddr *)&server_address, sizeof server_address) == -1) {
+    if (connect(socket_fd, (struct sockaddr *) &server_address, sizeof server_address) == -1) {
         perror("connect");
         exit(1);
     }
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
         token = strtok(NULL, "\n");
     }
 
-    // Send the Response to the Server
+    // Send the Response to the
     char response[100];
     memset(response,0x00, sizeof(response));
 
