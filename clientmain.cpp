@@ -9,7 +9,7 @@
 
 #define SERVER_NAME_LEN_MAX 255
 
-#define DEBUG 1
+#define DEBUG 0
 
 int main(int argc, char *argv[])
 {
@@ -36,6 +36,11 @@ int main(int argc, char *argv[])
     /* Get server port from command line arguments or stdin. */
     server_port = atoi(Destport);
 
+    /* Print IP or Host and Port number */
+    // Host 127.0.0.1, and port 5000.
+
+    printf("Host %s, and port %d.\n", server_name, server_port);
+
     /* Get server host from server name. */
     server_host = gethostbyname(server_name);
 
@@ -44,6 +49,7 @@ int main(int argc, char *argv[])
     server_address.sin_family = server_host->h_addrtype;
     server_address.sin_port = htons(server_port);
     memcpy(&server_address.sin_addr.s_addr, server_host->h_addr, server_host->h_length);
+
 
     /* Create TCP socket. */
     if ((socket_fd = socket(server_host->h_addrtype, SOCK_STREAM, 0)) == -1) {
@@ -58,9 +64,14 @@ int main(int argc, char *argv[])
     }
 
     memset(message_received, 0x00, sizeof(message_received));
-    read(socket_fd, message_received, sizeof(message_received));
+    ssize_t  read_status = read(socket_fd, message_received, sizeof(message_received));
+    if (read_status == -1) {
+        perror("read");
+        exit(1);
+    }
 
     // Parse the message received from the server using \n as delimiter
+    bool isSupportedProtocol = false;
     char *token = strtok(message_received, "\n");
     while (token != NULL) {
         // check if the incoming version is either 'TEXT TCP 1.0\n' or 'TEXT TCP 1.1\n'
@@ -68,15 +79,22 @@ int main(int argc, char *argv[])
             printf("Server: Error; Incoming Token = %s\n", token);
             break;
         } else {
+#if DEBUG
             printf("Server: %s\n", token);
+#endif
+            isSupportedProtocol = true;
         }
         token = strtok(NULL, "\n");
+    }
+
+    if (!isSupportedProtocol) {
+        printf("Server: Error; Unsupported Protocol\n");
+        exit(1);
     }
 
     // Send the Response to the
     char response[100];
     memset(response,0x00, sizeof(response));
-
     sprintf(response,"%s","OK\n");
     int send_status = send(socket_fd, response, strlen(response), 0);
     if (send_status == -1) {
@@ -86,16 +104,15 @@ int main(int argc, char *argv[])
 
     // Expect the server to send a challenge to solve with the syntax '<OPERATION> <VALUE1> <VALUE2>\n'.
     memset(message_received, 0x00, sizeof(message_received));
-    int read_status = read(socket_fd, message_received, sizeof(message_received));
+    read_status = read(socket_fd, message_received, sizeof(message_received));
     if (read_status == -1) {
         perror("read");
         exit(1);
     }
 
     // print the challenge
-#ifdef DEBUG
-    printf("Server: %s\n", message_received);
-#endif
+    printf("ASSIGNMENT: %s", message_received);
+
 
     // Parse the message received from the server.
     char *operation = strtok(message_received, " ");
@@ -117,7 +134,7 @@ int main(int argc, char *argv[])
     }
 
     // Perform the operation
-    double result;
+    double result = 0.0;
     if (isfloat) {
         if (strcmp(operation, "fadd") == 0) {
             result = f1 + f2;
@@ -149,7 +166,7 @@ int main(int argc, char *argv[])
     }
 
     // print the response
-#ifdef DEBUG
+#if DEBUG
     printf("Client: %s", response);
 #endif
 
@@ -169,9 +186,8 @@ int main(int argc, char *argv[])
     }
 
     // print the final response
-#ifdef DEBUG
-    printf("Server: %s\n", message_received);
-#endif
+    printf("%s", message_received);
+
 
     close(socket_fd);
     return 0;
