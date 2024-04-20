@@ -68,6 +68,24 @@ int main(int argc, char *argv[])
         }
     }
 
+     if (p == NULL) {
+        fprintf(stderr, "Failed to extract IP address\n");
+        return 2;
+    }
+
+    // Convert the IP address to a string and print it
+    char ipstr[INET6_ADDRSTRLEN];
+    void *addr;
+    if (server_addr.ss_family == AF_INET) {
+        struct sockaddr_in *ipv4 = (struct sockaddr_in *)&server_addr;
+        addr = &(ipv4->sin_addr);
+    } else {
+        struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)&server_addr;
+        addr = &(ipv6->sin6_addr);
+    }
+
+    inet_ntop(server_addr.ss_family, addr, ipstr, sizeof ipstr);
+    printf("Connecting to %s\n", ipstr);
 
     /* Create TCP socket. */
     if ((socket_fd = socket(server_host->h_addrtype, SOCK_STREAM, 0)) == -1) {
