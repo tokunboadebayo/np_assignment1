@@ -88,13 +88,13 @@ int main(int argc, char *argv[])
     printf("Connecting to %s\n", ipstr);
 
     /* Create TCP socket. */
-    if ((socket_fd = socket(server_host->h_addrtype, SOCK_STREAM, 0)) == -1) {
+    if ((socket_fd = socket(server_addr.ss_family, SOCK_STREAM, 0)) == -1) {
         perror("socket");
         exit(1);
     }
 
     /* Connect to socket with server address. */
-    if (connect(socket_fd, (struct sockaddr *) &server_address, sizeof server_address) == -1) {
+   if (connect(socket_fd, (struct sockaddr *) &server_addr, sizeof server_addr) == -1) {
         perror("connect");
         exit(1);
     }
