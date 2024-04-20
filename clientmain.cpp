@@ -17,8 +17,6 @@ int main(int argc, char *argv[])
 {
     char server_name[SERVER_NAME_LEN_MAX + 1] = {0};
     int server_port, socket_fd;
-
-
     char message_received[300];
 
 
@@ -48,12 +46,7 @@ int main(int argc, char *argv[])
     hints.ai_family = AF_UNSPEC; // Support both IPv4 and IPv6
     hints.ai_socktype = SOCK_STREAM;
 
-    struct addrinfo hints, *server_info, *p;
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC; // Support both IPv4 and IPv6
-    hints.ai_socktype = SOCK_STREAM;
-
-     int status = getaddrinfo(server_name, Destport, &hints, &server_info);
+    int status = getaddrinfo(server_name, Destport, &hints, &server_info);
     if (status != 0) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
         return 1;
