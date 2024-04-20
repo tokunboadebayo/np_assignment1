@@ -1,4 +1,5 @@
 
+
 #include <netdb.h>
 #include <cstdio>
 #include <cstdlib>
@@ -6,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #define SERVER_NAME_LEN_MAX 255
 
@@ -15,8 +17,8 @@ int main(int argc, char *argv[])
 {
     char server_name[SERVER_NAME_LEN_MAX + 1] = {0};
     int server_port, socket_fd;
-    struct hostent *server_host;
-    struct sockaddr_in server_address;
+
+
     char message_received[300];
 
 
@@ -41,8 +43,10 @@ int main(int argc, char *argv[])
 
     printf("Host %s, and port %d.\n", server_name, server_port);
 
-    /* Get server host from server name. */
-    server_host = gethostbyname(server_name);
+    struct addrinfo hints, *server_info, *p;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC; // Support both IPv4 and IPv6
+    hints.ai_socktype = SOCK_STREAM;
 
     /* Initialise IPv4 server address with server host. */
     memset(&server_address, 0, sizeof server_address);
