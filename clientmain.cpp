@@ -48,11 +48,25 @@ int main(int argc, char *argv[])
     hints.ai_family = AF_UNSPEC; // Support both IPv4 and IPv6
     hints.ai_socktype = SOCK_STREAM;
 
-    /* Initialise IPv4 server address with server host. */
-    memset(&server_address, 0, sizeof server_address);
-    server_address.sin_family = server_host->h_addrtype;
-    server_address.sin_port = htons(server_port);
-    memcpy(&server_address.sin_addr.s_addr, server_host->h_addr, server_host->h_length);
+    struct addrinfo hints, *server_info, *p;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC; // Support both IPv4 and IPv6
+    hints.ai_socktype = SOCK_STREAM;
+
+     int status = getaddrinfo(server_name, Destport, &hints, &server_info);
+    if (status != 0) {
+        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+        return 1;
+    }
+
+    // Extract the first IP address
+    struct sockaddr_storage server_addr;
+    for (p = server_info; p != NULL; p = p->ai_next) {
+        if (p->ai_family == AF_INET || p->ai_family == AF_INET6) {
+            memcpy(&server_addr, p->ai_addr, p->ai_addrlen);
+            break;
+        }
+    }
 
 
     /* Create TCP socket. */
